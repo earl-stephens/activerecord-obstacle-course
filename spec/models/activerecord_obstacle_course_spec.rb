@@ -209,6 +209,7 @@ describe 'ActiveRecord Obstacle Course' do
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
+    orders_of_user_3 = Order.where(user_id: 3)
     # ------------------------------------------------------------
 
     # Expectation
