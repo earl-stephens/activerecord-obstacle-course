@@ -395,12 +395,16 @@ describe 'ActiveRecord Obstacle Course' do
     expected_result = ['Apples', 'Grapes', 'Jalapeno', 'Figs']
 
     # ----------------------- Using Ruby -------------------------
-    names = Order.last.items.all.map(&:name)
-    names.sort_by! { |x| x[/\d+/].to_i }
+    # names = Order.last.items.all.map(&:name)
+    # names.sort_by! { |x| x[/\d+/].to_i }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
+    # binding.pry
+    last_order = Order.last
+    # binding.pry
+    names = Item.joins(:orders).where("order_id = ?", last_order.id).pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
