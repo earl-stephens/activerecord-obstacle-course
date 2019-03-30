@@ -404,14 +404,15 @@ describe 'ActiveRecord Obstacle Course' do
     # binding.pry
     last_order = Order.last
     # binding.pry
-    names = Item.joins(:orders).where("order_id = ?", last_order.id).pluck(:name)
+    names = Item.joins(:orders).where(orders: {id: last_order.id}).pluck(:name)
+    # names = Item.joins(:orders).where("order_id = ?", last_order.id).pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
     expect(names).to eq(expected_result)
   end
 
-  xit '18. returns the names of items for a users order' do
+  it '18. returns the names of items for a users order' do
     expected_result = ['Grapes', 'Bananas', 'Ice Cream', 'Figs']
 
     # ----------------------- Using Ruby -------------------------
@@ -429,9 +430,11 @@ describe 'ActiveRecord Obstacle Course' do
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
-     Order.joins(:order_items).where(user_id: @user_3.id)
-     Item.joins(:orders).where(orders: {user_id: @user_3.id}).group(:order_id)
-    binding.pry
+     # Order.joins(:order_items).where(user_id: @user_3.id)
+     # binding.pry
+     # Item.joins(:orders).where(orders: {user_id: @user_3.id}).limit(3).last.pluck(:names)
+    # binding.pry
+    items_for_user_3_third_order = Order.where(user_id: @user_3.id).limit(3).last.items.pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
@@ -536,13 +539,15 @@ describe 'ActiveRecord Obstacle Course' do
     expected_result = [@order_11, @order_5]
 
     # ------------------ Inefficient Solution -------------------
-    orders = Order.where(user: @user_2)
-    order_ids = OrderItem.where(order_id: orders, item: @item_4).map(&:order_id)
-    orders = order_ids.map { |id| Order.find(id) }
+    # orders = Order.where(user: @user_2)
+    # order_ids = OrderItem.where(order_id: orders, item: @item_4).map(&:order_id)
+    # orders = order_ids.map { |id| Order.find(id) }
     # -----------------------------------------------------------
 
     # ------------------ Improved Solution ----------------------
     #  Solution goes here
+    # binding.pry
+    orders = User.find(@user_2.id).orders.joins(:items).where(items: {id: @item_4.id})
     # -----------------------------------------------------------
 
     # Expectation
