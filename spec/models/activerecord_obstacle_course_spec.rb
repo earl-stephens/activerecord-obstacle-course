@@ -573,7 +573,7 @@ describe 'ActiveRecord Obstacle Course' do
     # binding.pry
 
     # ordered_items = OrderItem.pluck(:item_id).uniq
-    ordered_items = Item.joins(:orders).uniq
+    ordered_items = Item.joins(:orders).order(:name).uniq
     # ordered_items = Item.joins(:order_items).distinct
     # ---------------------------------------------------------------
 
