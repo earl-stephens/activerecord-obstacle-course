@@ -559,17 +559,22 @@ describe 'ActiveRecord Obstacle Course' do
     expected_result = [@item_1, @item_4, @item_9, @item_2, @item_5, @item_10, @item_3, @item_8, @item_7]
 
     # ----------------------- Using Ruby -------------------------
-    items = Item.all
-
-    ordered_items = items.map do |item|
-      item if item.orders.present?
-    end
-
-    ordered_items = ordered_items.compact
+    # items = Item.all
+    #
+    # ordered_items = items.map do |item|
+    #   item if item.orders.present?
+    # end
+    #
+    # ordered_items = ordered_items.compact
     # ------------------------------------------------------------
 
     # ------------------ ActiveRecord Solution ----------------------
     # Solution goes here
+    # binding.pry
+
+    # ordered_items = OrderItem.pluck(:item_id).uniq
+    ordered_items = Item.joins(:orders).order(:name).uniq
+    # ordered_items = Item.joins(:order_items).distinct
     # ---------------------------------------------------------------
 
     # Expectations
@@ -621,7 +626,7 @@ describe 'ActiveRecord Obstacle Course' do
     expect(ordered_items_names).to_not include(unordered_items)
   end
 
-  xit '27. returns a table of information for all users orders' do
+  it '27. returns a table of information for all users orders' do
     custom_results = [@user_3, @user_1, @user_2]
 
     # using a single ActiveRecord call, fetch a joined object that mimics the
@@ -633,7 +638,9 @@ describe 'ActiveRecord Obstacle Course' do
     # Megan      |         6
 
     # ------------------ ActiveRecord Solution ----------------------
-    custom_results = []
+# binding.pry
+
+    custom_results = User.joins(:orders).select("users.*, count(orders.id) as total_order_count").group(:name).order("total_order_count")
     # ---------------------------------------------------------------
 
     expect(custom_results[0].name).to eq(@user_3.name)
