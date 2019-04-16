@@ -128,7 +128,7 @@ describe 'ActiveRecord Obstacle Course' do
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
-    items = Item.where(id: [ids_to_find])
+    items = Item.where(id: ids_to_find)
     # ------------------------------------------------------------
 
     # Expectation
@@ -209,7 +209,7 @@ describe 'ActiveRecord Obstacle Course' do
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
-    orders_of_user_3 = Order.where(user_id: 3)
+    orders_of_user_3 = Order.where(user_id: @user_3.id)
     # ------------------------------------------------------------
 
     # Expectation
@@ -402,9 +402,9 @@ describe 'ActiveRecord Obstacle Course' do
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
     # binding.pry
-    last_order = Order.last
+    # last_order = Order.last
     # binding.pry
-    names = Item.joins(:orders).where(orders: {id: last_order.id}).pluck(:name)
+    names = Item.joins(:orders).where(orders: {id: Order.last.id}).pluck(:name)
     # names = Item.joins(:orders).where("order_id = ?", last_order.id).pluck(:name)
     # ------------------------------------------------------------
 
@@ -547,7 +547,9 @@ describe 'ActiveRecord Obstacle Course' do
     # ------------------ Improved Solution ----------------------
     #  Solution goes here
     # binding.pry
-    orders = User.find(@user_2.id).orders.joins(:items).where(items: {id: @item_4.id})
+    # orders = User.find(@user_2.id).orders.joins(:items).where(items: {id: @item_4.id})
+    # orders = User.joins(:items).where(id: @user_2.id, items: {id: @item_4.id}).orders
+    orders = Order.joins(:order_items).where(user_id: @user_2.id, order_items: {item_id: @item_4.id})
     # -----------------------------------------------------------
 
     # Expectation
@@ -573,7 +575,7 @@ describe 'ActiveRecord Obstacle Course' do
     # binding.pry
 
     # ordered_items = OrderItem.pluck(:item_id).uniq
-    ordered_items = Item.joins(:orders).order(:name).uniq
+    ordered_items = Item.joins(:orders).order(:name).distinct
     # ordered_items = Item.joins(:order_items).distinct
     # ---------------------------------------------------------------
 
@@ -618,7 +620,7 @@ describe 'ActiveRecord Obstacle Course' do
     # ------------------ ActiveRecord Solution ----------------------
     # Solution goes here
     # binding.pry
-    ordered_items_names = Item.joins(:orders).order(:name).pluck(:name).uniq
+    ordered_items_names = Item.joins(:orders).order(:name).distinct.pluck(:name)
     # When you find a solution, experiment with adjusting your method chaining
     # Which ones are you able to switch around without relying on Ruby's Enumerable methods?
     # ---------------------------------------------------------------
@@ -770,7 +772,8 @@ describe 'ActiveRecord Obstacle Course' do
     Bullet.start_request
 
     # ------------------------------------------------------
-    orders = Order.all.includes(:items) # Edit only this line
+    # Edit only this line
+        orders = Order.all.includes(:items)
     # ------------------------------------------------------
 
     # Do not edit below this line
